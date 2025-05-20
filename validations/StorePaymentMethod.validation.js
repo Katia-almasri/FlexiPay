@@ -1,0 +1,70 @@
+import Joi from "joi";
+import { paymentMethod } from "../enums/PaymentMethod.enum.js";
+
+// Common fields per provider
+const paypalCredentials = Joi.object({
+  client_id: Joi.string()
+    .required()
+    .messages({ "any.required": "PayPal client_id is required." }),
+  client_secret: Joi.string()
+    .required()
+    .messages({ "any.required": "PayPal clientSecret is required." }),
+});
+
+const stripeCredentials = Joi.object({
+  publishable_key: Joi.string()
+    .required()
+    .messages({ "any.required": "Stripe publishable_key is required." }),
+  secret_key: Joi.string()
+    .required()
+    .messages({ "any.required": "Stripe secret_key is required." }),
+});
+
+const cryptoCredentials = Joi.object({
+  wallet_address: Joi.string()
+    .required()
+    .messages({ "any.required": "Wallet address is required." }),
+  network: Joi.string()
+    .required()
+    .messages({ "any.required": "Crypto network is required." }),
+});
+
+const bankCredentials = Joi.object({
+  account_number: Joi.string()
+    .required()
+    .messages({ "any.required": "Account number is required." }),
+  iban: Joi.string()
+    .required()
+    .messages({ "any.required": "IBAN is required." }),
+  swift_code: Joi.string()
+    .required()
+    .messages({ "any.required": "SWIFT code is required." }),
+  bank_name: Joi.string().optional(),
+});
+
+// main validation
+export const storePaymentMethodSchema = Joi.object({
+  type: Joi.string()
+    .required()
+    .valid(...Object.values(paymentMethod))
+    .messages({
+      "any.required": "Type is required.",
+      "any.only": `Type must be one of: ${Object.values(paymentMethod)}.`,
+      "string.empty": "Type cannot be empty.",
+    }),
+
+  credentials: Joi.alternatives()
+    .conditional("type", {
+      switch: [
+        { is: "paypal", then: paypalCredentials },
+        { is: "stripe", then: stripeCredentials },
+        { is: "crypto", then: cryptoCredentials },
+        { is: "bank", then: bankCredentials },
+      ],
+      otherwise: Joi.forbidden(),
+    })
+    .required()
+    .messages({ "any.required": "Credentials are required." }),
+
+  is_primary: Joi.boolean().optional(),
+});

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { authRoutes } from "./routes/api/auth.js";
 import { customerRoutes } from "./routes/api/customer.js";
 import { connectDB } from "./config/Database.config.js";
-import { roles } from "./enums/userRole.enum.js";
+import { paymentRoutes } from "./routes/api/payment.js";
 import { isAuthenticated } from "./middleware/auth.middleware.js";
 
 /**
@@ -29,6 +29,7 @@ let port = process.env.PORT;
  */
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", isAuthenticated, customerRoutes);
+app.use("/api/payment-methods", isAuthenticated, paymentRoutes);
 
 /**
  * Initiaing App & DB

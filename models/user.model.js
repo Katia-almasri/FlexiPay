@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { roles } from "../enums/userRole.enum.js";
-import { providerTypes } from "../enums/ProviderType.enum.js";
+import { paymentMethodSchema } from "./PaymentMethod.model.js";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
@@ -8,15 +8,6 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      paymentMethods: [
-        {
-          provider: { type: String, enum: Object.values(providerTypes) },
-          details: {
-            type: mongoose.Schema.Types.Mixed,
-            // Example: { email: "paypal@example.com" } or { address: "0xabc..." }
-          },
-        },
-      ],
     },
     email: {
       type: String,
@@ -33,6 +24,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: roles.CUSTOMER,
     },
+    paymentMethods: [paymentMethodSchema],
   },
   {
     timestamp: true,
@@ -43,6 +35,18 @@ const userSchema = new mongoose.Schema(
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+userSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+
+  if (update.password) {
+    const hashed = await bcrypt.hash(update.password, 10);
+    update.password = hashed;
+    this.setUpdate(update);
+  }
+
   next();
 });
 
