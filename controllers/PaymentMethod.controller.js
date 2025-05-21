@@ -1,6 +1,11 @@
 import {
   addPaymentMethod,
-  showPaymentMethodsByUser,
+  getPaymentMethodsByUser,
+  getPaymentMethods,
+  showPaymentMethodByUser,
+  updatePaymentMethodByUser,
+  switchPrimaryPaymentMethodById,
+  deletePaymentMethodById,
 } from "../services/PaymentMethod.service.js";
 import { statusCode } from "../enums/common/StatusCode.enum.js";
 import { paginate, sliceRanges } from "../utils/common/Paginate.util.js";
@@ -30,7 +35,7 @@ export let store = async (req, res) => {
 
 export let indexByUser = async (req, res) => {
   try {
-    const paymentMethods = await showPaymentMethodsByUser(
+    const paymentMethods = await getPaymentMethodsByUser(
       req.user.id,
       req.query
     );
@@ -47,6 +52,95 @@ export let indexByUser = async (req, res) => {
           pagination
         )
       );
+  } catch (error) {
+    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
+      data: null,
+      msg: error.message,
+      status: statusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
+};
+
+// show payment methods that used in the system (list them)
+export let index = async (req, res) => {
+  const paymentMethods = await getPaymentMethods();
+  console.log(paymentMethods);
+  return res.status(statusCode.OK).json({
+    data: paymentMethods,
+    msg: "",
+    status: statusCode.OK,
+  });
+};
+
+export let showByUser = async (req, res) => {
+  let paymentMethod = await showPaymentMethodByUser(req.user.id, req.params.id);
+  if (!paymentMethod)
+    return res.status(statusCode.NOT_FOUND).json({
+      data: null,
+      msg: "this payment method not found!",
+      status: statusCode.NOT_FOUND,
+    });
+
+  return res.status(statusCode.OK).json({
+    data: paymentMethod,
+    msg: "",
+    status: statusCode.OK,
+  });
+};
+
+export let updateByUser = async (req, res) => {
+  try {
+    const data = {
+      id: req.params.id,
+      ...req.body,
+    };
+
+    let paymentMethod = await updatePaymentMethodByUser(req.user.id, data);
+    return res.status(statusCode.OK).json({
+      data: paymentMethod,
+      msg: `payment method ${paymentMethod.type} credentials has updated successfully!`,
+      status: statusCode.OK,
+    });
+  } catch (error) {
+    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
+      data: null,
+      msg: error.message,
+      status: statusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
+};
+
+export let switchPrimaryPaymentMethod = async (req, res) => {
+  try {
+    let paymentMethod = await switchPrimaryPaymentMethodById(
+      req.user.id,
+      req.params.id
+    );
+    return res.status(statusCode.OK).json({
+      data: paymentMethod,
+      msg: "",
+      status: statusCode.OK,
+    });
+  } catch (error) {
+    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
+      data: null,
+      msg: error.message,
+      status: statusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
+};
+
+export let destroy = async (req, res) => {
+  try {
+    let paymentMethod = await deletePaymentMethodById(
+      req.user.id,
+      req.params.id
+    );
+    return res.status(statusCode.OK).json({
+      data: paymentMethod,
+      msg: "payment method removed successfully",
+      status: statusCode.OK,
+    });
   } catch (error) {
     return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
       data: null,

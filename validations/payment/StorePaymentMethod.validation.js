@@ -1,8 +1,8 @@
 import Joi from "joi";
-import { paymentMethod } from "../enums/PaymentMethod.enum.js";
+import { paymentMethod } from "../../enums/PaymentMethod.enum.js";
 
 // Common fields per provider
-const paypalCredentials = Joi.object({
+export const paypalCredentials = Joi.object({
   client_id: Joi.string()
     .required()
     .messages({ "any.required": "PayPal client_id is required." }),
@@ -11,7 +11,7 @@ const paypalCredentials = Joi.object({
     .messages({ "any.required": "PayPal clientSecret is required." }),
 });
 
-const stripeCredentials = Joi.object({
+export const stripeCredentials = Joi.object({
   publishable_key: Joi.string()
     .required()
     .messages({ "any.required": "Stripe publishable_key is required." }),
@@ -20,7 +20,7 @@ const stripeCredentials = Joi.object({
     .messages({ "any.required": "Stripe secret_key is required." }),
 });
 
-const cryptoCredentials = Joi.object({
+export const cryptoCredentials = Joi.object({
   wallet_address: Joi.string()
     .required()
     .messages({ "any.required": "Wallet address is required." }),
@@ -29,7 +29,7 @@ const cryptoCredentials = Joi.object({
     .messages({ "any.required": "Crypto network is required." }),
 });
 
-const bankCredentials = Joi.object({
+export const bankCredentials = Joi.object({
   account_number: Joi.string()
     .required()
     .messages({ "any.required": "Account number is required." }),
