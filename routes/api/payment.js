@@ -7,11 +7,15 @@ import {
   updateByUser,
   switchPrimaryPaymentMethod,
   destroy,
-} from "../../controllers/PaymentMethod.controller.js";
+} from "../../controllers/payment/PaymentMethod.controller.js";
 import { storePaymentMethodSchema } from "../../validations/payment/StorePaymentMethod.validation.js";
 import { updatePaymentMethodSchema } from "../../validations/payment/UpdatePaymentMethod.validation.js";
 import { validation } from "../../middleware/Validation.middleware.js";
 import { isBeneficiary } from "../../middleware/IsBeneficiary.middleware.js";
+import {
+  getPaymentMethod,
+  defaultPaymentMethod,
+} from "../../controllers/payment/StripePaymentMethod.controller.js";
 
 export let paymentRoutes = express.Router();
 
@@ -36,4 +40,13 @@ paymentRoutes.put(
 );
 
 paymentRoutes.put("/switch/:id", isBeneficiary, switchPrimaryPaymentMethod);
+
 paymentRoutes.delete("/:id", isBeneficiary, destroy);
+
+paymentRoutes.put(
+  "/stripe/payment-method/:id",
+  isBeneficiary,
+  getPaymentMethod
+);
+
+paymentRoutes.get("/stripe/attach/:id", isBeneficiary, defaultPaymentMethod);

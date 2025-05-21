@@ -6,10 +6,10 @@ import {
   updatePaymentMethodByUser,
   switchPrimaryPaymentMethodById,
   deletePaymentMethodById,
-} from "../services/PaymentMethod.service.js";
-import { statusCode } from "../enums/common/StatusCode.enum.js";
-import { paginate, sliceRanges } from "../utils/common/Paginate.util.js";
-import { response } from "../utils/common/RestfulApi.util.js";
+} from "../../services/payment/PaymentMethod.service.js";
+import { statusCode } from "../../enums/common/StatusCode.enum.js";
+import { paginate, sliceRanges } from "../../utils/common/Paginate.util.js";
+import { response } from "../../utils/common/RestfulApi.util.js";
 
 export let store = async (req, res) => {
   try {

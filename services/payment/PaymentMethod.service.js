@@ -1,19 +1,24 @@
-import { paymentMethod } from "../enums/PaymentMethod.enum.js";
-import { User } from "../models/user.model.js";
+import { paymentMethod } from "../../enums/PaymentMethod.enum.js";
+import { User } from "../../models/user.model.js";
 import {
   PaymentMethodCollection,
   PaymentMethodResource,
-} from "../resources/payment/PaymentMethod.resource.js";
-
-import { paymentMethodDetails } from "../resources/payment/PaymentMethodDetails.resource.js";
+} from "../../resources/payment/PaymentMethod.resource.js";
+import { createCustomer } from "../payment/Stripe.service.js";
+import { paymentMethodDetails } from "../../resources/payment/PaymentMethodDetails.resource.js";
 
 export let addPaymentMethod = async (userId, data) => {
   try {
     let user = await User.findById(userId);
     let { type, credentials, isPrimary = false } = data;
     user.paymentMethods.forEach((pm) => (pm.isPrimary = false));
+
+    // check the payment methods types
+    const requiredData = await createRequiredDataByPaymentMethod(type, user);
+    credentials = { ...credentials, ...requiredData };
     user.paymentMethods.push({ type, credentials, isPrimary });
     await user.save();
+
     return PaymentMethodResource(
       user.paymentMethods[user.paymentMethods.length - 1]
     );
@@ -45,7 +50,7 @@ export let showPaymentMethodByUser = async (userId, paymentMethodId) => {
   const user = await User.findById(userId);
   let paymentMethod = user.paymentMethods.id(paymentMethodId);
   if (!paymentMethod) return null;
-  return PaymentMethodResource(paymentMethod);
+  return paymentMethodDetails(paymentMethod);
 };
 
 export let updatePaymentMethodByUser = async (userId, data) => {
@@ -53,7 +58,7 @@ export let updatePaymentMethodByUser = async (userId, data) => {
   let paymentMethod = user.paymentMethods.id(data.id);
   if (!paymentMethod) throw new Error("the payment method not found!");
   paymentMethod.credentials = new Map(Object.entries(data.credentials));
-  paymentMethod.type = data.type;
+  paymentMethod.type = data.type ?? paymentMethod.type;
   await user.save();
   return paymentMethodDetails(paymentMethod);
 };
@@ -77,4 +82,46 @@ export let deletePaymentMethodById = async (userId, paymentMethodId) => {
   user.paymentMethods.pull(paymentMethodId);
   await user.save();
   return PaymentMethodResource(paymentMethod);
+};
+
+/**
+ * this function is just to add some additional required credentials for a given payment method
+ */
+export let addCredentialsToPaymentMethod = async (userId, data) => {
+  const user = await User.findById(userId);
+  let paymentMethod = user.paymentMethods.id(data.id);
+  if (!paymentMethod) throw new Error("the payment method not found!");
+  let credentials = paymentMethod.credentials;
+  let existingCredentials = Object.fromEntries(paymentMethod.credentials);
+  credentials = { ...existingCredentials, ...data.stripePaymentMethod };
+  paymentMethod.credentials = new Map(Object.entries(credentials));
+  await user.save();
+  return paymentMethodDetails(paymentMethod);
+};
+
+/**
+ *  this function is to create the required data for each chosen payment method
+ *  and attach it with the custome`s payment method details
+ *  */
+let createRequiredDataByPaymentMethod = async (chosenPaymentMethod, user) => {
+  try {
+    var requiredData = null;
+    switch (chosenPaymentMethod) {
+      case paymentMethod.STRIPE:
+        // create the stripe customer
+        const result = await createCustomer(user);
+        requiredData = { customer_id: result.id };
+        break;
+      case paymentMethod.PAYPAL:
+        break;
+
+      case paymentMethod.CRYPTO:
+        break;
+      case paymentMethod.BANK:
+        break;
+    }
+    return requiredData;
+  } catch (error) {
+    console.log(error.message);
+  }
 };
