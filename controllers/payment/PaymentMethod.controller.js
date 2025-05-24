@@ -6,6 +6,7 @@ import {
   updatePaymentMethodByUser,
   switchPrimaryPaymentMethodById,
   deletePaymentMethodById,
+  performPayment,
 } from "../../services/payment/PaymentMethod.service.js";
 import { statusCode } from "../../enums/common/StatusCode.enum.js";
 import { paginate, sliceRanges } from "../../utils/common/Paginate.util.js";
@@ -136,9 +137,34 @@ export let destroy = async (req, res) => {
       req.user.id,
       req.params.id
     );
+    if (!paymentMethod)
+      return res.status(statusCode.NOT_FOUND).json({
+        data: null,
+        msg: "payment method not found!",
+        status: statusCode.NOT_FOUND,
+      });
     return res.status(statusCode.OK).json({
       data: paymentMethod,
       msg: "payment method removed successfully",
+      status: statusCode.OK,
+    });
+  } catch (error) {
+    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
+      data: null,
+      msg: error.message,
+      status: statusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
+};
+
+export let pay = async (req, res) => {
+  try {
+    const paymentMethodId = req.body.payment_method_id;
+    const userId = req.user.id;
+    const result = await performPayment(userId, paymentMethodId, req.body);
+    return res.status(statusCode.OK).json({
+      data: result,
+      msg: "payment succeed!",
       status: statusCode.OK,
     });
   } catch (error) {

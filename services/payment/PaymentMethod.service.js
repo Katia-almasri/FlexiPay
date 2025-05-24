@@ -6,6 +6,7 @@ import {
 } from "../../resources/payment/PaymentMethod.resource.js";
 import { createCustomer } from "../payment/Stripe.service.js";
 import { paymentMethodDetails } from "../../resources/payment/PaymentMethodDetails.resource.js";
+import { StripePaymentStrategy } from "../../services/payment/strategies/StripePaymentStrategy.service.js";
 
 export let addPaymentMethod = async (userId, data) => {
   try {
@@ -78,7 +79,7 @@ export let switchPrimaryPaymentMethodById = async (userId, paymentMethodId) => {
 export let deletePaymentMethodById = async (userId, paymentMethodId) => {
   const user = await User.findById(userId);
   let paymentMethod = user.paymentMethods.id(paymentMethodId);
-  if (!paymentMethod) throw new Error("the payment method not found!");
+  if (!paymentMethod) return null;
   user.paymentMethods.pull(paymentMethodId);
   await user.save();
   return PaymentMethodResource(paymentMethod);
@@ -123,5 +124,31 @@ let createRequiredDataByPaymentMethod = async (chosenPaymentMethod, user) => {
     return requiredData;
   } catch (error) {
     console.log(error.message);
+  }
+};
+
+/**
+ * this function is to execute the main payment function in the system
+ */
+export let performPayment = async (userId, paymentMethodId, data) => {
+  const user = await User.findById(userId);
+  const chosenPaymentMethod = user.paymentMethods.id(paymentMethodId);
+  switch (chosenPaymentMethod.type) {
+    case paymentMethod.STRIPE:
+      //1. get the corresponding paymentMethodId of this customer
+      let existingCredentials = Object.fromEntries(
+        chosenPaymentMethod.credentials
+      );
+      const paymentMethodId = existingCredentials.payment_method_id;
+      const customerId = existingCredentials.customer_id;
+      const stripeStrategyInstance = new StripePaymentStrategy();
+      data = {
+        ...data,
+        payment_method_id: paymentMethodId,
+        customer_id: customerId,
+      };
+
+      const clientSecret = await stripeStrategyInstance.pay(data);
+      return { client_secret: clientSecret };
   }
 };

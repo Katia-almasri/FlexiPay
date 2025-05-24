@@ -30,13 +30,11 @@ export let makeDefaultStripePaymentMethod = async (userId, paymentMethodId) => {
     const user = await User.findById(userId);
     const paymentMethod = user.paymentMethods.id(paymentMethodId);
     const credentials = Object.fromEntries(paymentMethod.credentials);
-    console.log(credentials);
     await stripe.paymentMethods.attach(credentials.payment_method_id, {
       customer: credentials.customer_id,
     });
     return true;
   } catch (error) {
-    console.log(error);
-    throw new Error(error.nessage);
+    throw new Error(error.message);
   }
 };

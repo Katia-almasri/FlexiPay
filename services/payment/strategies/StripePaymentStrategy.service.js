@@ -5,31 +5,24 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export class StripePaymentStrategy extends PaymentStrategy {
-  constructor(credentials) {
-    super(credentials);
-    this._stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  constructor() {
+    super();
+    this._stripe = new Stripe(process.env.STRIPE_SECRET);
   }
 
   async pay(data) {
-    //1. create the intent
-    const stripeClientSecret = await createStripePayment(data);
+    return await this.createStripePayment(data);
+  }
+
+  async createStripePayment(data) {
+    const paymentIntent = await this._stripe.paymentIntents.create({
+      amount: data.amount,
+      currency: data.currency ?? process.env.CURRENCY,
+      customer: data.customer_id,
+      payment_method: data.payment_method_id,
+      off_session: true,
+      confirm: true,
+    });
+    return paymentIntent.client_secret;
   }
 }
-
-let createStripePayment = async (data) => {
-  const { amount, currency, customer, paymentMethod, merchantId, customerId } =
-    data;
-  const paymentIntent = await this._stripe.paymentIntents.create({
-    amount,
-    currency,
-    customer,
-    paymentMethod,
-    confirm: true,
-    description: `Payment from customer ${customerId} to merchant ${merchantId}`,
-    metadata: {
-      merchantId,
-      customerId,
-    },
-  });
-  return paymentIntent.client_secret;
-};

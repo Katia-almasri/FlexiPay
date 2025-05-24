@@ -1,7 +1,5 @@
 export class PaymentStrategy {
-  constructor(credentials) {
-    this._credentials = credentials;
-  }
+  constructor() {}
 
   pay(data) {
     console.log("the payment strategy");

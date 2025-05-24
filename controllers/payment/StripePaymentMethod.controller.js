@@ -43,3 +43,7 @@ export let defaultPaymentMethod = async (req, res) => {
     });
   }
 };
+
+export let stripeWebhook = async () => {
+  //TODO implement webhook
+};
