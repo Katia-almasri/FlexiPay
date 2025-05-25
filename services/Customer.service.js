@@ -24,3 +24,13 @@ export let updateProfile = async (data) => {
     return null;
   }
 };
+
+export let getCustomerIdByUserId = async (userId) => {
+  const user = await User.findById(userId);
+  const paymentMethods = user.paymentMethods;
+  //paymentMethods.filter(pm => pm.credentials.customer_id =)
+  const credentials = Object.fromEntries(paymentMethod.credentials);
+  const customerId = credentials.customer_id;
+  console.log(customerId);
+  return customerId;
+};

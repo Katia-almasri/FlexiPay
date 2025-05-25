@@ -13,6 +13,12 @@ export let transactionResource = async (transaction) => {
   };
 };
 
+export let transactionCollection = async (transactions) => {
+  return await Promise.all(
+    transactions.map((transaction) => transactionResource(transaction))
+  );
+};
+
 let getUserById = async (userId) => {
   return await User.findById(userId);
 };

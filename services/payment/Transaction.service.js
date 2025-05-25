@@ -1,5 +1,10 @@
 import { Transaction } from "../../models/Transaction.model.js";
-import { transactionResource } from "../../resources/payment/Transaction.resource.js";
+import {
+  transactionResource,
+  transactionCollection,
+} from "../../resources/payment/Transaction.resource.js";
+import { User } from "../../models/user.model.js";
+import { orderTypes } from "../../enums/common/OrderType.enum.js";
 
 export let createTransaction = async (data) => {
   const transaction = await Transaction.create(data);
@@ -11,4 +16,46 @@ export let updateTransactionByCriteria = async (criteria, data) => {
     new: true,
   });
   return await transactionResource(transaction);
+};
+
+export let getTransactionsByCustomer = async (
+  userId,
+  filter,
+  order = orderTypes.DESC
+) => {
+  console.log(filter);
+  let transactions = await Transaction.find({ customerId: userId }).sort({
+    createdAt: order == orderTypes.DESC ? -1 : +1,
+  });
+  if (filter?.status)
+    transactions = transactions.filter(
+      (transaction) => transaction.status === filter.status
+    );
+
+  if (filter?.provider)
+    transactions = transactions.filter(
+      (transaction) => transaction.provider === filter.provider
+    );
+
+  if (filter?.currency)
+    transactions = transactions.filter(
+      (transaction) => transaction.currency === filter.currency
+    );
+
+  if (filter?.merchant)
+    transactions = transactions.filter(
+      (transaction) => transaction.merchantId == filter.merchant
+    );
+
+  return await transactionCollection(transactions);
+};
+
+export let getTransactionsByMerchant = async (userId, filter) => {};
+
+export let showTransactionByCustomer = async (userId, transactionId) => {
+  const transaction = await Transaction.findById(transactionId);
+  const stripeCustomerId = await getCustomerIdByUserId(transaction);
+
+  if (!transaction || transaction.customerId !== stripeCustomerId) return null;
+  return transactionResource(transaction);
 };

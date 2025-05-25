@@ -6,5 +6,5 @@ export let response = (
   msg = "",
   paginate = null
 ) => {
-  return { data, code, msg, paginate };
+  return { data, msg, code, paginate };
 };

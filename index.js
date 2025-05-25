@@ -6,6 +6,7 @@ import { connectDB } from "./config/Database.config.js";
 import { paymentRoutes } from "./routes/api/payment.js";
 import { isAuthenticated } from "./middleware/auth.middleware.js";
 import { webhookRoutes } from "./routes/api/webhook.js";
+import { transactionRoutes } from "./routes/api/transaction.js";
 
 /**
  * Config
@@ -34,6 +35,7 @@ let port = process.env.PORT;
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", isAuthenticated, customerRoutes);
 app.use("/api/payment-methods", isAuthenticated, paymentRoutes);
+app.use("/api/transactions", isAuthenticated, transactionRoutes);
 
 /**
  * Initiaing App & DB

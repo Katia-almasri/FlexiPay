@@ -24,8 +24,8 @@ export let store = async (req, res) => {
     let paymentMethod = await addPaymentMethod(req.user.id, data);
     return res.status(statusCode.OK).json({
       data: paymentMethod,
-      msg: "new payment method just added to you!",
       status: statusCode.OK,
+      msg: "new payment method just added to you!",
     });
   } catch (error) {
     return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
@@ -50,8 +50,8 @@ export let indexByUser = async (req, res) => {
       .json(
         response(
           paymentMethods.slice(ranges.start, ranges.end),
-          statusCode.OK,
           "Fetched successfully",
+          statusCode.OK,
           pagination
         )
       );
@@ -60,6 +60,7 @@ export let indexByUser = async (req, res) => {
       data: null,
       msg: error.message,
       status: statusCode.INTERNAL_SERVER_ERROR,
+      pagination: null,
     });
   }
 };

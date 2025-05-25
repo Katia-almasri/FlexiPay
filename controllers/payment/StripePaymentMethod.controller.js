@@ -49,7 +49,6 @@ export let stripeWebhook = async (req, res) => {
   try {
     const sign = req.headers["stripe-signature"];
     const result = await implementWebhook(req.body, sign);
-    console.log(result);
     return res.status(statusCode.OK).json({
       data: result,
       msg: "",
