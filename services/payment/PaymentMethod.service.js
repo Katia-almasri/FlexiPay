@@ -7,6 +7,8 @@ import {
 import { createCustomer } from "../payment/Stripe.service.js";
 import { paymentMethodDetails } from "../../resources/payment/PaymentMethodDetails.resource.js";
 import { StripePaymentStrategy } from "../../services/payment/strategies/StripePaymentStrategy.service.js";
+import { Transaction } from "../../models/Transaction.model.js";
+import { transactionResource } from "../../resources/payment/Transaction.resource.js";
 
 export let addPaymentMethod = async (userId, data) => {
   try {
@@ -72,7 +74,6 @@ export let switchPrimaryPaymentMethodById = async (userId, paymentMethodId) => {
     pm.id == paymentMethodId ? (pm.isPrimary = true) : (pm.isPrimary = false)
   );
   await user.save();
-  console.log(paymentMethods);
   return PaymentMethodResource(paymentMethod);
 };
 
@@ -144,11 +145,27 @@ export let performPayment = async (userId, paymentMethodId, data) => {
       const stripeStrategyInstance = new StripePaymentStrategy();
       data = {
         ...data,
+        user_id: userId,
         payment_method_id: paymentMethodId,
         customer_id: customerId,
       };
 
-      const clientSecret = await stripeStrategyInstance.pay(data);
-      return { client_secret: clientSecret };
+      return await stripeStrategyInstance.pay(data);
+  }
+};
+
+export let performRefund = async (transactionId, data) => {
+  const transaction = await Transaction.findById(transactionId);
+  if (!transaction)
+    throw new Error(`transaction id: ${transactionId} not found!`);
+
+  const transactionProvider = transaction.provider;
+  switch (transactionProvider) {
+    case paymentMethod.STRIPE:
+      const paymentIntentId = transaction.paymentIntentId;
+      const amount = data.amount ?? transaction.amount;
+      const stripeStrategyInstance = new StripePaymentStrategy();
+      await stripeStrategyInstance.refund(amount, paymentIntentId);
+      return transactionResource(transaction);
   }
 };

@@ -1,8 +1,9 @@
-import { User } from "../../models/user.model.js";
 import { addCredentialsToPaymentMethod } from "../../services/payment/PaymentMethod.service.js";
 import { statusCode } from "../../enums/common/StatusCode.enum.js";
-import { makeDefaultStripePaymentMethod } from "../../services/payment/Stripe.service.js";
-
+import {
+  makeDefaultStripePaymentMethod,
+  implementWebhook,
+} from "../../services/payment/Stripe.service.js";
 export let getPaymentMethod = async (req, res) => {
   try {
     // store is in the user`s corresponding payment method
@@ -44,6 +45,22 @@ export let defaultPaymentMethod = async (req, res) => {
   }
 };
 
-export let stripeWebhook = async () => {
-  //TODO implement webhook
+export let stripeWebhook = async (req, res) => {
+  try {
+    const sign = req.headers["stripe-signature"];
+    const result = await implementWebhook(req.body, sign);
+    console.log(result);
+    return res.status(statusCode.OK).json({
+      data: result,
+      msg: "",
+      status: statusCode.OK,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
+      data: null,
+      msg: error.message,
+      status: statusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
 };

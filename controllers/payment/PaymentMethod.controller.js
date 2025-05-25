@@ -7,10 +7,12 @@ import {
   switchPrimaryPaymentMethodById,
   deletePaymentMethodById,
   performPayment,
+  performRefund,
 } from "../../services/payment/PaymentMethod.service.js";
 import { statusCode } from "../../enums/common/StatusCode.enum.js";
 import { paginate, sliceRanges } from "../../utils/common/Paginate.util.js";
 import { response } from "../../utils/common/RestfulApi.util.js";
+import { currencyTypes } from "../../enums/CurrencyType.enum.js";
 
 export let store = async (req, res) => {
   try {
@@ -65,7 +67,6 @@ export let indexByUser = async (req, res) => {
 // show payment methods that used in the system (list them)
 export let index = async (req, res) => {
   const paymentMethods = await getPaymentMethods();
-  console.log(paymentMethods);
   return res.status(statusCode.OK).json({
     data: paymentMethods,
     msg: "",
@@ -159,12 +160,34 @@ export let destroy = async (req, res) => {
 
 export let pay = async (req, res) => {
   try {
-    const paymentMethodId = req.body.payment_method_id;
+    const paymentMethodId = req.params.id;
     const userId = req.user.id;
-    const result = await performPayment(userId, paymentMethodId, req.body);
+    const data = {
+      amount: req.body.amount,
+      merchantId: req.body.merchant_id,
+      currency: req.body.curreny ?? currencyTypes.USD,
+    };
+    const result = await performPayment(userId, paymentMethodId, data);
     return res.status(statusCode.OK).json({
       data: result,
       msg: "payment succeed!",
+      status: statusCode.OK,
+    });
+  } catch (error) {
+    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
+      data: null,
+      msg: error.message,
+      status: statusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
+};
+
+export let refund = async (req, res) => {
+  try {
+    const result = await performRefund(req.params.id, req.body);
+    return res.status(statusCode.OK).json({
+      data: result,
+      msg: "refund succeed!",
       status: statusCode.OK,
     });
   } catch (error) {

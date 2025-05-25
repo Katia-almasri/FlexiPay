@@ -8,10 +8,12 @@ import {
   switchPrimaryPaymentMethod,
   destroy,
   pay,
+  refund,
 } from "../../controllers/payment/PaymentMethod.controller.js";
 import { storePaymentMethodSchema } from "../../validations/payment/StorePaymentMethod.validation.js";
 import { updatePaymentMethodSchema } from "../../validations/payment/UpdatePaymentMethod.validation.js";
 import { paySchema } from "../../validations/payment/Pay.validation.js";
+import { refundSchema } from "../../validations/payment/Refund.validation.js";
 import { validation } from "../../middleware/Validation.middleware.js";
 import { isBeneficiary } from "../../middleware/IsBeneficiary.middleware.js";
 import { customerRole } from "../../middleware/CustomerRole.middleware.js";
@@ -55,4 +57,11 @@ paymentRoutes.put(
 paymentRoutes.get("/stripe/attach/:id", isBeneficiary, defaultPaymentMethod);
 
 // pay (the main functionality of the system)
-paymentRoutes.post("/pay", [customerRole, validation(paySchema)], pay);
+paymentRoutes.post("/pay/:id", [customerRole, validation(paySchema)], pay);
+
+// refund takes the transactionId
+paymentRoutes.post(
+  "/refund/:id",
+  [customerRole, validation(refundSchema)],
+  refund
+);

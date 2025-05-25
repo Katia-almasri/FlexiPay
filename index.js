@@ -5,6 +5,7 @@ import { customerRoutes } from "./routes/api/customer.js";
 import { connectDB } from "./config/Database.config.js";
 import { paymentRoutes } from "./routes/api/payment.js";
 import { isAuthenticated } from "./middleware/auth.middleware.js";
+import { webhookRoutes } from "./routes/api/webhook.js";
 
 /**
  * Config
@@ -16,6 +17,9 @@ dotenv.config();
  * Middleware
  */
 const app = express();
+
+app.use("/api/webhooks", webhookRoutes);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

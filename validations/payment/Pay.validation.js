@@ -5,9 +5,9 @@ export const paySchema = Joi.object({
     "any.required": "Amount is required.",
     "number.base": "Enter a valid amount.",
   }),
-  payment_method_id: Joi.string().required().messages({
-    "any.required": "Payment method id is required.",
-    "string.empty": "Payment method id is required.",
+
+  merchant_id: Joi.string().required().messages({
+    "string.empty": "merchant_id cannot be empty.",
   }),
 
   currency: Joi.string()

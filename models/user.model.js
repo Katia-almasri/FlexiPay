@@ -3,7 +3,7 @@ import { roles } from "../enums/userRole.enum.js";
 import { paymentMethodSchema } from "./PaymentMethod.model.js";
 import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.Schema(
+export const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
