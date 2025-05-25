@@ -38,27 +38,27 @@ export let indexByCustomer = async (req, res) => {
 };
 
 export let showByCustomer = async (req, res) => {
-  //   try {
-  const transaction = await showTransactionByCustomer(
-    req.user.id,
-    req.params.id
-  );
-  if (!transaction)
-    return res.status(statusCode.NOT_FOUND).json({
-      data: null,
-      msg: `transaction #${req.params.id} not found!`,
-      status: statusCode.NOT_FOUND,
+  try {
+    const transaction = await showTransactionByCustomer(
+      req.user.id,
+      req.params.id
+    );
+    if (!transaction)
+      return res.status(statusCode.NOT_FOUND).json({
+        data: null,
+        msg: `transaction #${req.params.id} not found!`,
+        status: statusCode.NOT_FOUND,
+      });
+    return res.status(statusCode.OK).json({
+      data: transaction,
+      msg: "",
+      status: statusCode.OK,
     });
-  return res.status(statusCode.OK).json({
-    data: transaction,
-    msg: "",
-    status: statusCode.OK,
-  });
-  //   } catch (error) {
-  //     return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
-  //       data: null,
-  //       msg: error.message,
-  //       status: statusCode.INTERNAL_SERVER_ERROR,
-  //     });
-  //   }
+  } catch (error) {
+    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
+      data: null,
+      msg: error.message,
+      status: statusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
 };
