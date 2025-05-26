@@ -1,9 +1,7 @@
-```md
+````md
 # 💳 FlexiPay – Custom Payment Gateway
 
 **FlexiPay** is a scalable and secure custom payment gateway built with **Node.js**, **Express**, and **MongoDB**. It acts as a central platform to process payments through various providers including **Stripe**, **PayPal**, and digital wallets. Designed with extensibility in mind, FlexiPay can be embedded in SaaS platforms or marketplaces using a platform-owned strategy, managing merchant payments and weekly balance distributions.
-
----
 
 ## 📦 Features
 
@@ -17,8 +15,8 @@
 - ⚙️ **Extensible** to add more gateways (e.g., Apple Pay, Google Pay)
 
 ## 📁 Project Structure
-```
 
+```basha
 flexipay/
 │
 ├── models/
@@ -49,7 +47,7 @@ flexipay/
 │ └── paypal.js
 │
 └── app.js
-
+```
 ````
 
 ## ⚙️ Setup & Installation
@@ -58,6 +56,8 @@ flexipay/
    ```bash
    git clone https://github.com/yourusername/flexipay.git
    cd flexipay
+   ```
+
 ````
 
 2. **Install dependencies**
@@ -177,3 +177,4 @@ MIT © 2025 FlexiPay
 
 Would you like me to generate an example `.env`, a Postman collection, or include Stripe setup notes in the README?
 ```
+````
