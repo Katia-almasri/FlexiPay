@@ -16,8 +16,6 @@
 - 🧮 **Scheduled Payout Job** for weekly merchant balance distribution
 - ⚙️ **Extensible** to add more gateways (e.g., Apple Pay, Google Pay)
 
----
-
 ## 📁 Project Structure
 ```
 
@@ -53,8 +51,6 @@ flexipay/
 └── app.js
 
 ````
-
----
 
 ## ⚙️ Setup & Installation
 
