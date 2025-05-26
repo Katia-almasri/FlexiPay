@@ -16,7 +16,7 @@
 
 ## 📁 Project Structure
 
-```basha
+```bash
 flexipay/
 │
 ├── models/
@@ -48,7 +48,6 @@ flexipay/
 │
 └── app.js
 ```
-````
 
 ## ⚙️ Setup & Installation
 
@@ -57,7 +56,6 @@ flexipay/
    git clone https://github.com/yourusername/flexipay.git
    cd flexipay
    ```
-
 ````
 
 2. **Install dependencies**
@@ -177,4 +175,7 @@ MIT © 2025 FlexiPay
 
 Would you like me to generate an example `.env`, a Postman collection, or include Stripe setup notes in the README?
 ```
-````
+
+```
+
+```
