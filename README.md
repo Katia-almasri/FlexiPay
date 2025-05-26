@@ -1,7 +1,3 @@
-Here’s a professional and detailed `README.md` you can use for your **FlexiPay** project — a custom payment gateway built with Express and MongoDB, and integrated with Stripe, PayPal, and digital wallets.
-
----
-
 ```md
 # 💳 FlexiPay – Custom Payment Gateway
 
