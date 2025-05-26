@@ -3,7 +3,6 @@ import {
   transactionResource,
   transactionCollection,
 } from "../../resources/payment/Transaction.resource.js";
-import { User } from "../../models/user.model.js";
 import { orderTypes } from "../../enums/common/OrderType.enum.js";
 
 export let createTransaction = async (data) => {
@@ -54,8 +53,6 @@ export let getTransactionsByMerchant = async (userId, filter) => {};
 
 export let showTransactionByCustomer = async (userId, transactionId) => {
   const transaction = await Transaction.findById(transactionId);
-  const stripeCustomerId = await getCustomerIdByUserId(transaction);
-
-  if (!transaction || transaction.customerId !== stripeCustomerId) return null;
+  if (!transaction || transaction.customerId.toString() !== userId) return null;
   return transactionResource(transaction);
 };
