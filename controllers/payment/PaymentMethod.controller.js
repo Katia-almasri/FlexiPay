@@ -167,6 +167,8 @@ export let pay = async (req, res) => {
       amount: req.body.amount,
       merchantId: req.body.merchant_id,
       currency: req.body.curreny ?? currencyTypes.USD,
+      returnUrl: req.body.return_url ?? "",
+      cancelUrl: req.body.cancel_url ?? "",
     };
     const result = await performPayment(userId, paymentMethodId, data);
     return res.status(statusCode.OK).json({

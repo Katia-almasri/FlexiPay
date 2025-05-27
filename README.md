@@ -171,11 +171,5 @@ MIT © 2025 FlexiPay
 
 ```
 
----
-
 Would you like me to generate an example `.env`, a Postman collection, or include Stripe setup notes in the README?
-```
-
-```
-
 ```

@@ -10,7 +10,7 @@ import {
   pay,
   refund,
 } from "../../controllers/payment/PaymentMethod.controller.js";
-import { storePaymentMethodSchema } from "../../validations/payment/StorePaymentMethod.validation.js";
+import { storeCustomerPaymentMethodSchema } from "../../validations/payment/StorePaymentMethod.validation.js";
 import { updatePaymentMethodSchema } from "../../validations/payment/UpdatePaymentMethod.validation.js";
 import { paySchema } from "../../validations/payment/Pay.validation.js";
 import { refundSchema } from "../../validations/payment/Refund.validation.js";
@@ -24,10 +24,10 @@ import {
 
 export let paymentRoutes = express.Router();
 
-// add new payment method
+// add new payment method for customer
 paymentRoutes.post(
-  "/",
-  [isBeneficiary, validation(storePaymentMethodSchema)],
+  "/customers/",
+  [customerRole, validation(storeCustomerPaymentMethodSchema)],
   store
 );
 
@@ -65,6 +65,3 @@ paymentRoutes.post(
   [customerRole, validation(refundSchema)],
   refund
 );
-
-
-

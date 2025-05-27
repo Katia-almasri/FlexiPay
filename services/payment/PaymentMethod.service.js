@@ -7,6 +7,7 @@ import {
 import { createCustomer } from "../payment/Stripe.service.js";
 import { paymentMethodDetails } from "../../resources/payment/PaymentMethodDetails.resource.js";
 import { StripePaymentStrategy } from "../../services/payment/strategies/StripePaymentStrategy.service.js";
+import { PaypalPaymentStrategy } from "../../services/payment/strategies/PaypalPaymentStrategy.service.js";
 import { Transaction } from "../../models/Transaction.model.js";
 import { transactionResource } from "../../resources/payment/Transaction.resource.js";
 
@@ -149,8 +150,11 @@ export let performPayment = async (userId, paymentMethodId, data) => {
         payment_method_id: paymentMethodId,
         customer_id: customerId,
       };
-
       return await stripeStrategyInstance.pay(data);
+
+    case paymentMethod.PAYPAL:
+      const paypalStrategyInstance = new PaypalPaymentStrategy();
+      return await paypalStrategyInstance.pay(data);
   }
 };
 

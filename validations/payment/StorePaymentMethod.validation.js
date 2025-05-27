@@ -8,7 +8,7 @@ export const paypalCredentials = Joi.object({
     .messages({ "any.required": "PayPal client_id is required." }),
   client_secret: Joi.string()
     .required()
-    .messages({ "any.required": "PayPal clientSecret is required." }),
+    .messages({ "any.required": "PayPal client_secret is required." }),
 });
 
 export const stripeCredentials = Joi.object({
@@ -42,8 +42,36 @@ export const bankCredentials = Joi.object({
   bank_name: Joi.string().optional(),
 });
 
-// main validation
-export const storePaymentMethodSchema = Joi.object({
+// customer validation
+export const storeCustomerPaymentMethodSchema = Joi.object({
+  type: Joi.string()
+    .required()
+    .valid(...Object.values(paymentMethod))
+    .messages({
+      "any.required": "Type is required.",
+      "any.only": `Type must be one of: ${Object.values(paymentMethod)}.`,
+      "string.empty": "Type cannot be empty.",
+    }),
+
+  credentials: Joi.alternatives()
+    .conditional("type", {
+      switch: [
+        { is: "stripe", then: stripeCredentials.required() },
+        { is: "crypto", then: cryptoCredentials.required() },
+        { is: "bank", then: bankCredentials.required() },
+        { is: "paypal", then: Joi.forbidden() },
+      ],
+      otherwise: Joi.forbidden(),
+    })
+    .messages({
+      "any.required": "Credentials are required for this payment method.",
+    }),
+
+  is_primary: Joi.boolean().optional(),
+});
+
+// merchant validation
+export const storeMerchantPaymentMethodSchema = Joi.object({
   type: Joi.string()
     .required()
     .valid(...Object.values(paymentMethod))

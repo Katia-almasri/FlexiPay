@@ -15,4 +15,8 @@ export const paySchema = Joi.object({
     .messages({
       "any.only": `Type must be one of ${Object.values(currencyTypes)}.`,
     }),
+
+  return_url: Joi.string().optional(),
+
+  cancel_url: Joi.string().optional(),
 });

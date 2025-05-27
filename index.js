@@ -7,6 +7,8 @@ import { paymentRoutes } from "./routes/api/payment.js";
 import { isAuthenticated } from "./middleware/auth.middleware.js";
 import { webhookRoutes } from "./routes/api/webhook.js";
 import { transactionRoutes } from "./routes/api/transaction.js";
+import { paypalRoutes } from "./routes/api/paypal.js";
+import { htmlRoutes } from "./routes/url/route.js";
 
 /**
  * Config
@@ -36,6 +38,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/customers", isAuthenticated, customerRoutes);
 app.use("/api/payment-methods", isAuthenticated, paymentRoutes);
 app.use("/api/transactions", isAuthenticated, transactionRoutes);
+app.use("/api/payment-methods/paypal", isAuthenticated, paypalRoutes);
+//
+app.use("/", htmlRoutes);
 
 /**
  * Initiaing App & DB
