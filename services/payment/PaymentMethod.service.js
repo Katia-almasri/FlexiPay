@@ -135,6 +135,11 @@ let createRequiredDataByPaymentMethod = async (chosenPaymentMethod, user) => {
 export let performPayment = async (userId, paymentMethodId, data) => {
   const user = await User.findById(userId);
   const chosenPaymentMethod = user.paymentMethods.id(paymentMethodId);
+  data = {
+    ...data,
+    user_id: userId,
+    payment_method_id: paymentMethodId,
+  };
   switch (chosenPaymentMethod.type) {
     case paymentMethod.STRIPE:
       //1. get the corresponding paymentMethodId of this customer
@@ -146,14 +151,16 @@ export let performPayment = async (userId, paymentMethodId, data) => {
       const stripeStrategyInstance = new StripePaymentStrategy();
       data = {
         ...data,
-        user_id: userId,
-        payment_method_id: paymentMethodId,
         customer_id: customerId,
       };
       return await stripeStrategyInstance.pay(data);
 
     case paymentMethod.PAYPAL:
       const paypalStrategyInstance = new PaypalPaymentStrategy();
+      data = {
+        ...data,
+        customer_id: null,
+      };
       return await paypalStrategyInstance.pay(data);
   }
 };

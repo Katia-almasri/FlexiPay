@@ -54,3 +54,5 @@ export const captureOrder = async (orderId) => {
   if (!res.ok) throw new Error(`PayPal Capture Failed: ${data.message}`);
   return data;
 };
+
+export let implementWebhook = async (data, signature) => {};

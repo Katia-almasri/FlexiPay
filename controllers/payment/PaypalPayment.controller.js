@@ -4,7 +4,9 @@ import { statusCode } from "../../enums/common/StatusCode.enum.js";
 export let capture = async (req, res) => {
   try {
     const { token } = req.query;
+
     const capture = await captureOrder(token);
+
     return res.status(statusCode.OK).json({
       data: capture,
       msg: "Payment captured!",
