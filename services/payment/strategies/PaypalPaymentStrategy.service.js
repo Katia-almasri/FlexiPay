@@ -1,5 +1,6 @@
 import { PaymentStrategy } from "../../../abstracts/PaymentMethod.interface.js";
 import { currencyTypes } from "../../../enums/CurrencyType.enum.js";
+import { providerTypes } from "../../../enums/ProviderType.enum.js";
 import { getAccessToken } from "../Paypal.service.js";
 import { createTransaction } from "../Transaction.service.js";
 
@@ -44,7 +45,6 @@ export class PaypalPaymentStrategy extends PaymentStrategy {
     );
 
     const returnedResult = await result.json();
-
     //2. add the succeeded payment to the transaction model
     data = {
       amount: data.amount,
@@ -52,6 +52,7 @@ export class PaypalPaymentStrategy extends PaymentStrategy {
       customerId: data.user_id,
       merchantId: data.merchantId,
       paymentIntentId: returnedResult.id,
+      provider: providerTypes.PAYPAL,
     };
     const transaction = await createTransaction(data);
 

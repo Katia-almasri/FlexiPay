@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import { CustomerStripe } from "../../resources/payment/stripe/CustomerStripe.resource.js";
 import { User } from "../../models/user.model.js";
 import { stripeEvents } from "../../enums/StripeEvent.enum.js";
-import { Transaction } from "../../models/Transaction.model.js";
 import { transactionStatus } from "../../enums/TransactionStatus.enum.js";
 import { updateTransactionByCriteria } from "./Transaction.service.js";
 dotenv.config();
