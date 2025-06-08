@@ -66,4 +66,38 @@ export class PaypalPaymentStrategy extends PaymentStrategy {
       transaction: transaction,
     };
   }
+
+  async refund(amount, captureId, currency) {
+    try {
+      const accessToken = await getAccessToken();
+
+      const refundUrl = `${process.env.PAYPAL_API_BASE}/v2/payments/captures/${captureId}/refund`;
+      const refundPayload = amount
+        ? {
+            amount: {
+              value: amount,
+              currency_code: currency,
+            },
+          }
+        : undefined;
+
+      const response = await fetch(refundUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: refundPayload ? JSON.stringify(refundPayload) : null,
+      });
+
+      const refundData = await response.json();
+      if (!response.ok) {
+        throw new Error(refundData.details[0].description);
+      }
+
+      return refundData;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }

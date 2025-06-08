@@ -44,9 +44,14 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    providerMetadata: {
+      type: Object,
+      default: {},
+    },
   },
   {
-    timestamps: true, // fix: not "timestamp"
+    timestamps: true,
   }
 );
 

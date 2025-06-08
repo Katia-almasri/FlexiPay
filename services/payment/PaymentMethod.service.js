@@ -167,6 +167,7 @@ export let performPayment = async (userId, paymentMethodId, data) => {
 
 export let performRefund = async (transactionId, data) => {
   const transaction = await Transaction.findById(transactionId);
+  let amount = null;
   if (!transaction)
     throw new Error(`transaction id: ${transactionId} not found!`);
 
@@ -174,9 +175,18 @@ export let performRefund = async (transactionId, data) => {
   switch (transactionProvider) {
     case paymentMethod.STRIPE:
       const paymentIntentId = transaction.paymentIntentId;
-      const amount = data.amount ?? transaction.amount;
+      amount = data.amount ?? transaction.amount;
       const stripeStrategyInstance = new StripePaymentStrategy();
       await stripeStrategyInstance.refund(amount, paymentIntentId);
+      return transactionResource(transaction);
+
+    case paymentMethod.PAYPAL:
+      const captureId = transaction.providerMetadata.paypal.captureId;
+      amount = data.amount ?? transaction.amount;
+      console.log(`capture: ${amount}`);
+      const currency = data.currency ?? process.env.CURRENCY;
+      const paypalStrategyInstance = new PaypalPaymentStrategy();
+      await paypalStrategyInstance.refund(amount, captureId, currency);
       return transactionResource(transaction);
   }
 };

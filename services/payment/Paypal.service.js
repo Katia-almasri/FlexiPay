@@ -83,27 +83,32 @@ export let implementWebhook = async (data) => {
       const resource = data.body?.resource;
       const captureId = resource?.id;
       const links = resource?.links || [];
-
+      console.log(resource);
       let orderId = null;
 
       // Extract orderId from the "up" link
       const upLink = links.find((link) => link.rel === "up");
       if (upLink && upLink.href) {
-        const match = upLink.href.match(/\/checkout\/orders\/([A-Z0-9]+)/);
-        if (match && match[1]) {
-          orderId = match[1]; // this is the paymentId (equivalent to paymentIntentId in Stripe)
+        const match1 = upLink.href.match(/\/checkout\/orders\/([A-Z0-9]+)/);
+        const match2 = upLink.href.match(/\/payments\/captures\/([A-Z0-9]+)/);
+        if (match1 && match1[1]) {
+          orderId = match1[1];
+        } else if (match2 && match2[1]) {
+          orderId = match2[1];
         }
       }
 
       switch (eventType) {
         case paypalEvents.COMPLETED:
           console.log("✅ Payment Completed");
-          console.log("Order ID (paymentIntentId):", orderId);
-          console.log("Capture ID:", captureId);
+          //console.log("Capture ID:", captureId);
 
           await updateTransactionByCriteria(
             { paymentIntentId: orderId },
-            { status: transactionStatus.SUCCEED }
+            {
+              status: transactionStatus.SUCCEED,
+              "providerMetadata.paypal.captureId": captureId,
+            }
           );
           break;
 
@@ -114,9 +119,13 @@ export let implementWebhook = async (data) => {
             { status: transactionStatus.APPROVED }
           );
           break;
-
-        case CANCELED:
-          console.log("❌ Payment Canceled");
+        case paypalEvents.REFUNDED:
+          console.log("↩️ Payment Refunded");
+          console.log("Capture ID:", orderId);
+          await updateTransactionByCriteria(
+            { "providerMetadata.paypal.captureId": orderId },
+            { status: transactionStatus.CHARGE_REFUNDED }
+          );
           break;
       }
     } else {
@@ -126,20 +135,4 @@ export let implementWebhook = async (data) => {
   } catch (error) {
     throw new Error(error.message);
   }
-};
-
-export let findPaymentIdFromWebhookLink = async (data) => {
-  const links = data.resource.links;
-  const upLink = links.find((link) => link.rel === "up");
-
-  let paymentId = null;
-  if (upLink && upLink.href) {
-    // URL format: https://api.paypal.com/v2/checkout/orders/5O190127TN364715T
-    const match = upLink.href.match(/\/checkout\/orders\/([A-Z0-9]+)/);
-    if (match && match[1]) {
-      paymentId = match[1];
-    }
-  }
-
-  return paymentId;
 };
