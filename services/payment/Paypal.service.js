@@ -123,9 +123,26 @@ export let implementWebhook = async (data) => {
           console.log("↩️ Payment Refunded");
           console.log("Capture ID:", orderId);
           await updateTransactionByCriteria(
-            { "providerMetadata.paypal.captureId": orderId },
-            { status: transactionStatus.CHARGE_REFUNDED }
+            {
+              "providerMetadata.paypal.captureId": orderId,
+            },
+            {
+              status: transactionStatus.CHARGE_REFUNDED,
+              refundedAmount:
+                resource.seller_payable_breakdown.net_amount.value,
+            }
           );
+          break;
+        case paypalEvents.CANCELED:
+          //TODO notify the user
+          break;
+
+        case paypalEvents.DECLINED:
+          //TODO notify the user
+          break;
+
+        case paypalEvents.DENIED:
+          //TODO notify the user
           break;
       }
     } else {
@@ -133,6 +150,6 @@ export let implementWebhook = async (data) => {
     }
     return { recieved: true };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(`something went wrong!, Please try again`);
   }
 };

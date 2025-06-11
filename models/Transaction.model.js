@@ -23,6 +23,12 @@ const transactionSchema = new mongoose.Schema(
       required: true,
     },
 
+    refundedAmount: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
     currency: {
       type: String,
       enum: Object.values(currencyTypes),

@@ -97,7 +97,7 @@ export class PaypalPaymentStrategy extends PaymentStrategy {
 
       return refundData;
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error("something went wrong!, please try again!");
     }
   }
 }

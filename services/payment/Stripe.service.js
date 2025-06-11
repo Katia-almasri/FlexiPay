@@ -76,7 +76,7 @@ export let implementWebhook = async (data, signature) => {
         { paymentIntentId: refund.payment_intent },
         {
           status: transactionStatus.CHARGE_REFUNDED,
-          amount: refund.amount_refunded,
+          refundedAmount: refund.amount_refunded,
         }
       );
 
