@@ -3,7 +3,7 @@ import { paymentMethod } from "../../enums/PaymentMethod.enum.js";
 import {
   paypalCredentials,
   stripeCredentials,
-  cryptoCredentials,
+  web3Credentials,
   bankCredentials,
 } from "./StorePaymentMethod.validation.js";
 
@@ -23,7 +23,7 @@ export const updatePaymentMethodSchema = Joi.object({
       switch: [
         { is: "paypal", then: paypalCredentials },
         { is: "stripe", then: stripeCredentials },
-        { is: "crypto", then: cryptoCredentials },
+        { is: "web3", then: web3Credentials },
         { is: "bank", then: bankCredentials },
       ],
       otherwise: Joi.forbidden(),

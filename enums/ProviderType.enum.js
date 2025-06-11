@@ -1,5 +1,5 @@
 export const providerTypes = {
   STRIPE: "stripe",
   PAYPAL: "paypal",
-  CRYPTO: "crypto",
+  WEB3: "web3",
 };

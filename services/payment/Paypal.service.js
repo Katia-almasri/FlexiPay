@@ -83,7 +83,6 @@ export let implementWebhook = async (data) => {
       const resource = data.body?.resource;
       const captureId = resource?.id;
       const links = resource?.links || [];
-      console.log(resource);
       let orderId = null;
 
       // Extract orderId from the "up" link
@@ -101,7 +100,6 @@ export let implementWebhook = async (data) => {
       switch (eventType) {
         case paypalEvents.COMPLETED:
           console.log("✅ Payment Completed");
-          //console.log("Capture ID:", captureId);
 
           await updateTransactionByCriteria(
             { paymentIntentId: orderId },
@@ -121,7 +119,6 @@ export let implementWebhook = async (data) => {
           break;
         case paypalEvents.REFUNDED:
           console.log("↩️ Payment Refunded");
-          console.log("Capture ID:", orderId);
           await updateTransactionByCriteria(
             {
               "providerMetadata.paypal.captureId": orderId,

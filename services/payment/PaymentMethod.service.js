@@ -10,6 +10,8 @@ import { StripePaymentStrategy } from "../../services/payment/strategies/StripeP
 import { PaypalPaymentStrategy } from "../../services/payment/strategies/PaypalPaymentStrategy.service.js";
 import { Transaction } from "../../models/Transaction.model.js";
 import { transactionResource } from "../../resources/payment/Transaction.resource.js";
+import { web3PaymentStrategy } from "./strategies/Web3PaymentStrategy.service.js";
+import { web3TokenTypes } from "../../enums/Web3TokenType.enum.js";
 
 export let addPaymentMethod = async (userId, data) => {
   try {
@@ -118,7 +120,7 @@ let createRequiredDataByPaymentMethod = async (chosenPaymentMethod, user) => {
       case paymentMethod.PAYPAL:
         break;
 
-      case paymentMethod.CRYPTO:
+      case paymentMethod.WEB3:
         break;
       case paymentMethod.BANK:
         break;
@@ -162,6 +164,24 @@ export let performPayment = async (userId, paymentMethodId, data) => {
         customer_id: null,
       };
       return await paypalStrategyInstance.pay(data);
+
+    case paymentMethod.WEB3:
+      // check for the userWallet if it exists in the data
+      if (!Object.values(web3TokenTypes).includes(data.currency)) {
+        throw new Error(
+          `Currency should be one of: ${Object.values(web3TokenTypes).join(
+            ", "
+          )}`
+        );
+      }
+
+      const web3StrategyInstance = new web3PaymentStrategy();
+      data = {
+        ...data,
+        customer_id: null,
+        credentials: chosenPaymentMethod.credentials,
+      };
+      return await web3StrategyInstance.pay(data);
   }
 };
 

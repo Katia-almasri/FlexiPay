@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { currencyTypes } from "../enums/CurrencyType.enum.js";
 import { transactionStatus } from "../enums/TransactionStatus.enum.js";
 import { paymentMethod } from "../enums/PaymentMethod.enum.js";
+import { providerMetadataSchema } from "./ProviderMetaData.model.js";
 
 const transactionSchema = new mongoose.Schema(
   {
@@ -51,10 +52,11 @@ const transactionSchema = new mongoose.Schema(
       required: true,
     },
 
-    providerMetadata: {
-      type: Object,
-      default: {},
+    userWallet: {
+      type: String,
     },
+
+    providerMetaData: providerMetadataSchema,
   },
   {
     timestamps: true,

@@ -20,7 +20,7 @@ export const stripeCredentials = Joi.object({
     .messages({ "any.required": "Stripe secret_key is required." }),
 });
 
-export const cryptoCredentials = Joi.object({
+export const web3Credentials = Joi.object({
   wallet_address: Joi.string()
     .required()
     .messages({ "any.required": "Wallet address is required." }),
@@ -57,7 +57,7 @@ export const storeCustomerPaymentMethodSchema = Joi.object({
     .conditional("type", {
       switch: [
         { is: "stripe", then: stripeCredentials.required() },
-        { is: "crypto", then: cryptoCredentials.required() },
+        { is: "web3", then: web3Credentials.required() },
         { is: "bank", then: bankCredentials.required() },
         { is: "paypal", then: Joi.forbidden() },
       ],
@@ -86,7 +86,7 @@ export const storeMerchantPaymentMethodSchema = Joi.object({
       switch: [
         { is: "paypal", then: paypalCredentials },
         { is: "stripe", then: stripeCredentials },
-        { is: "crypto", then: cryptoCredentials },
+        { is: "web3", then: web3Credentials },
         { is: "bank", then: bankCredentials },
       ],
       otherwise: Joi.forbidden(),

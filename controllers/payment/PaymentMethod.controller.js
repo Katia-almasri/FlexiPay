@@ -166,7 +166,7 @@ export let pay = async (req, res) => {
     const data = {
       amount: req.body.amount,
       merchantId: req.body.merchant_id,
-      currency: req.body.curreny ?? currencyTypes.USD,
+      currency: req.body.currency ?? currencyTypes.USD,
       returnUrl: req.body.return_url ?? "",
       cancelUrl: req.body.cancel_url ?? "",
     };

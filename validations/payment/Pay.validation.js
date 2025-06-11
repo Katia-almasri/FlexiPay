@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { currencyTypes } from "../../enums/CurrencyType.enum.js";
+
 export const paySchema = Joi.object({
   amount: Joi.number().required().messages({
     "any.required": "Amount is required.",
@@ -13,7 +14,9 @@ export const paySchema = Joi.object({
   currency: Joi.string()
     .valid(...Object.values(currencyTypes))
     .messages({
-      "any.only": `Type must be one of ${Object.values(currencyTypes)}.`,
+      "any.only": `Currency must be one of: ${Object.values(currencyTypes).join(
+        ", "
+      )}`,
     }),
 
   return_url: Joi.string().optional(),
