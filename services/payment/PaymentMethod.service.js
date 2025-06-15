@@ -202,11 +202,17 @@ export let performRefund = async (transactionId, data) => {
         return transactionResource(transaction);
 
       case paymentMethod.PAYPAL:
-        const captureId = transaction.providerMetadata.paypal.captureId;
+        const captureId = transaction?.providerMetadata.paypal.captureId;
         amount = data.amount ?? transaction.amount;
         const currency = data.currency ?? process.env.CURRENCY;
         const paypalStrategyInstance = new PaypalPaymentStrategy();
         await paypalStrategyInstance.refund(amount, captureId, currency);
+        return transactionResource(transaction);
+
+      case paymentMethod.WEB3:
+        const web3StrategyInstance = new web3PaymentStrategy();
+        amount = data.amount ?? transaction.amount;
+        web3StrategyInstance.refund(transactionId, amount);
         return transactionResource(transaction);
     }
   } catch (error) {

@@ -9,6 +9,7 @@ import { webhookRoutes } from "./routes/api/webhook.js";
 import { transactionRoutes } from "./routes/api/transaction.js";
 import { paypalRoutes } from "./routes/api/paypal.js";
 import { htmlRoutes } from "./routes/url/route.js";
+import { web3Listener } from "./config/Web3.config.js";
 
 /**
  * Config
@@ -47,6 +48,7 @@ app.use("/", htmlRoutes);
  */
 try {
   await connectDB();
+  //await web3Listener();
   app.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
   });
