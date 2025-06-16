@@ -4,7 +4,6 @@ export let web3Webhook = async (req, res) => {
   const event = req.body;
   console.log("📩 Webhook Received from Alchemy:");
   const eventData = event.event.activity[0];
-  console.log(eventData);
   await implementWebhook({
     fromAddress: eventData.fromAddress,
     transactionHash: eventData.hash,

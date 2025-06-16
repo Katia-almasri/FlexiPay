@@ -20,7 +20,7 @@ export const paymentMethodSchema = new mongoose.Schema(
     },
   },
   {
-    timestamp: true,
+    timestamps: true,
   }
 );
 

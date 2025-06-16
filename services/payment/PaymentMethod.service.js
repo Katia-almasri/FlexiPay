@@ -16,23 +16,23 @@ import { UnprocessableEntity } from "../../errors/UnprocessableEntityError.error
 import { NotFoundError } from "../../errors/NotFoundError.error.js";
 
 export let addPaymentMethod = async (userId, data) => {
-  try {
-    let user = await User.findById(userId);
-    let { type, credentials, isPrimary = false } = data;
-    user.paymentMethods.forEach((pm) => (pm.isPrimary = false));
+  let user = await User.findById(userId);
+  let { type, credentials, isPrimary = false } = data;
 
-    // check the payment methods types
-    const requiredData = await createRequiredDataByPaymentMethod(type, user);
-    credentials = { ...credentials, ...requiredData };
-    user.paymentMethods.push({ type, credentials, isPrimary });
-    await user.save();
+  if (isPrimary)
+    user.paymentMethods.forEach((pm) => {
+      if (pm.isPrimary) pm.isPrimary = false;
+    });
 
-    return PaymentMethodResource(
-      user.paymentMethods[user.paymentMethods.length - 1]
-    );
-  } catch (error) {
-    throw new Error(error);
-  }
+  // check the payment methods types
+  const requiredData = await createRequiredDataByPaymentMethod(type, user);
+  credentials = { ...credentials, ...requiredData };
+  user.paymentMethods.push({ type, credentials, isPrimary });
+  await user.save();
+
+  return PaymentMethodResource(
+    user.paymentMethods[user.paymentMethods.length - 1]
+  );
 };
 
 //show the payment method of this user
@@ -120,10 +120,7 @@ let createRequiredDataByPaymentMethod = async (chosenPaymentMethod, user) => {
         requiredData = { customer_id: result.id };
         break;
       case paymentMethod.PAYPAL:
-        break;
-
       case paymentMethod.WEB3:
-        break;
       case paymentMethod.BANK:
         break;
     }

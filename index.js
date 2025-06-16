@@ -10,6 +10,7 @@ import { transactionRoutes } from "./routes/api/transaction.js";
 import { paypalRoutes } from "./routes/api/paypal.js";
 import { htmlRoutes } from "./routes/url/route.js";
 import { errorHandler } from "./middleware/ErrorHandler.middleware.js";
+import mongoSanitize from "express-mongo-sanitize";
 
 /**
  * Config
@@ -44,6 +45,7 @@ app.use("/api/payment-methods/paypal", isAuthenticated, paypalRoutes);
 app.use("/", htmlRoutes);
 
 app.use(errorHandler);
+app.use(mongoSanitize());
 
 /**
  * Initiaing App & DB

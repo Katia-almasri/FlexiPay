@@ -50,8 +50,6 @@ export let login = async (req, res) => {
 
 export let resetPassword = async (req, res) => {
   try {
-    console.log(req.user.id);
-
     const data = {
       id: req.user.id,
       body: {
