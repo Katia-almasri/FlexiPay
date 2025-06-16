@@ -12,6 +12,8 @@ import { Transaction } from "../../models/Transaction.model.js";
 import { transactionResource } from "../../resources/payment/Transaction.resource.js";
 import { web3PaymentStrategy } from "./strategies/Web3PaymentStrategy.service.js";
 import { web3TokenTypes } from "../../enums/Web3TokenType.enum.js";
+import { UnprocessableEntity } from "../../errors/UnprocessableEntityError.error.js";
+import { NotFoundError } from "../../errors/NotFoundError.error.js";
 
 export let addPaymentMethod = async (userId, data) => {
   try {
@@ -95,7 +97,7 @@ export let deletePaymentMethodById = async (userId, paymentMethodId) => {
 export let addCredentialsToPaymentMethod = async (userId, data) => {
   const user = await User.findById(userId);
   let paymentMethod = user.paymentMethods.id(data.id);
-  if (!paymentMethod) throw new Error("the payment method not found!");
+  if (!paymentMethod) throw new NotFoundError("the payment method not found!");
   let credentials = paymentMethod.credentials;
   let existingCredentials = Object.fromEntries(paymentMethod.credentials);
   credentials = { ...existingCredentials, ...data.stripePaymentMethod };
@@ -168,7 +170,7 @@ export let performPayment = async (userId, paymentMethodId, data) => {
     case paymentMethod.WEB3:
       // check for the userWallet if it exists in the data
       if (!Object.values(web3TokenTypes).includes(data.currency)) {
-        throw new Error(
+        throw new UnprocessableEntity(
           `Currency should be one of: ${Object.values(web3TokenTypes).join(
             ", "
           )}`

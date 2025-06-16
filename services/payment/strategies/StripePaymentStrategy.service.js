@@ -12,53 +12,41 @@ export class StripePaymentStrategy extends PaymentStrategy {
   }
 
   async pay(data) {
-    try {
-      //1. perform the payment
-      const result = await this.createStripePayment(data);
-      data = {
-        amount: data.amount,
-        currency: data.currency,
-        customerId: data.user_id,
-        merchantId: data.merchantId,
-        paymentIntentId: result.id,
-      };
-      //2. add the succeeded payment to the transaction model
-      const transaction = await createTransaction(data);
+    //1. perform the payment
+    const result = await this.createStripePayment(data);
+    data = {
+      amount: data.amount,
+      currency: data.currency,
+      customerId: data.user_id,
+      merchantId: data.merchantId,
+      paymentIntentId: result.id,
+    };
+    //2. add the succeeded payment to the transaction model
+    const transaction = await createTransaction(data);
 
-      return {
-        client_secret: result.client_secret,
-        transaction: transaction,
-      };
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    return {
+      client_secret: result.client_secret,
+      transaction: transaction,
+    };
   }
 
   async refund(amount, paymentIntentId) {
-    try {
-      const result = await this._stripe.refunds.create({
-        payment_intent: paymentIntentId,
-        amount: amount,
-      });
-      return result;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    const result = await this._stripe.refunds.create({
+      payment_intent: paymentIntentId,
+      amount: amount,
+    });
+    return result;
   }
 
   async createStripePayment(data) {
-    try {
-      const paymentIntent = await this._stripe.paymentIntents.create({
-        amount: data.amount,
-        currency: data.currency ?? process.env.CURRENCY,
-        customer: data.customer_id,
-        payment_method: data.payment_method_id,
-        off_session: true,
-        confirm: true,
-      });
-      return paymentIntent;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    const paymentIntent = await this._stripe.paymentIntents.create({
+      amount: data.amount,
+      currency: data.currency ?? process.env.CURRENCY,
+      customer: data.customer_id,
+      payment_method: data.payment_method_id,
+      off_session: true,
+      confirm: true,
+    });
+    return paymentIntent;
   }
 }

@@ -13,6 +13,7 @@ import { statusCode } from "../../enums/common/StatusCode.enum.js";
 import { paginate, sliceRanges } from "../../utils/common/Paginate.util.js";
 import { response } from "../../utils/common/RestfulApi.util.js";
 import { currencyTypes } from "../../enums/CurrencyType.enum.js";
+import { catchAsync } from "../../utils/errors/CatchAsync.util.js";
 
 export let store = async (req, res) => {
   try {
@@ -159,45 +160,29 @@ export let destroy = async (req, res) => {
   }
 };
 
-export let pay = async (req, res) => {
-  try {
-    const paymentMethodId = req.params.id;
-    const userId = req.user.id;
-    const data = {
-      amount: req.body.amount,
-      merchantId: req.body.merchant_id,
-      currency: req.body.currency ?? currencyTypes.USD,
-      returnUrl: req.body.return_url ?? "",
-      cancelUrl: req.body.cancel_url ?? "",
-    };
-    const result = await performPayment(userId, paymentMethodId, data);
-    return res.status(statusCode.OK).json({
-      data: result,
-      msg: "payment succeed!",
-      status: statusCode.OK,
-    });
-  } catch (error) {
-    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
-      data: null,
-      msg: error.message,
-      status: statusCode.INTERNAL_SERVER_ERROR,
-    });
-  }
-};
+export let pay = catchAsync(async (req, res) => {
+  const paymentMethodId = req.params.id;
+  const userId = req.user.id;
+  const data = {
+    amount: req.body.amount,
+    merchantId: req.body.merchant_id,
+    currency: req.body.currency ?? currencyTypes.USD,
+    returnUrl: req.body.return_url ?? "",
+    cancelUrl: req.body.cancel_url ?? "",
+  };
+  const result = await performPayment(userId, paymentMethodId, data);
+  return res.status(statusCode.OK).json({
+    data: result,
+    msg: "payment succeed!",
+    status: statusCode.OK,
+  });
+});
 
-export let refund = async (req, res) => {
-  try {
-    const result = await performRefund(req.params.id, req.body);
-    return res.status(statusCode.OK).json({
-      data: result,
-      msg: "refund succeed!",
-      status: statusCode.OK,
-    });
-  } catch (error) {
-    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
-      data: null,
-      msg: error.message,
-      status: statusCode.INTERNAL_SERVER_ERROR,
-    });
-  }
-};
+export let refund = catchAsync(async (req, res) => {
+  const result = await performRefund(req.params.id, req.body);
+  return res.status(statusCode.OK).json({
+    data: result,
+    msg: "refund succeed!",
+    status: statusCode.OK,
+  });
+});

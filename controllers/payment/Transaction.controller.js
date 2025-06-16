@@ -55,10 +55,6 @@ export let showByCustomer = async (req, res) => {
       status: statusCode.OK,
     });
   } catch (error) {
-    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
-      data: null,
-      msg: error.message,
-      status: statusCode.INTERNAL_SERVER_ERROR,
-    });
+    next(error);
   }
 };

@@ -9,7 +9,7 @@ import { webhookRoutes } from "./routes/api/webhook.js";
 import { transactionRoutes } from "./routes/api/transaction.js";
 import { paypalRoutes } from "./routes/api/paypal.js";
 import { htmlRoutes } from "./routes/url/route.js";
-import { web3Listener } from "./config/Web3.config.js";
+import { errorHandler } from "./middleware/ErrorHandler.middleware.js";
 
 /**
  * Config
@@ -43,12 +43,13 @@ app.use("/api/payment-methods/paypal", isAuthenticated, paypalRoutes);
 //
 app.use("/", htmlRoutes);
 
+app.use(errorHandler);
+
 /**
  * Initiaing App & DB
  */
 try {
   await connectDB();
-  //await web3Listener();
   app.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
   });

@@ -4,29 +4,23 @@ import {
   makeDefaultStripePaymentMethod,
   implementWebhook,
 } from "../../services/payment/Stripe.service.js";
-export let getPaymentMethod = async (req, res) => {
-  try {
-    // store is in the user`s corresponding payment method
-    const updatedPaymentMethod = await addCredentialsToPaymentMethod(
-      req.user.id,
-      {
-        id: req.params.id,
-        stripePaymentMethod: req.body,
-      }
-    );
-    return res.status(statusCode.OK).json({
-      data: updatedPaymentMethod,
-      msg: `payment method ${updatedPaymentMethod.type} credentials has updated successfully!`,
-      status: statusCode.OK,
-    });
-  } catch (error) {
-    return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
-      data: null,
-      msg: error.message,
-      status: statusCode.INTERNAL_SERVER_ERROR,
-    });
-  }
-};
+import { catchAsync } from "../../utils/errors/CatchAsync.util.js";
+
+export let getPaymentMethod = catchAsync(async (req, res) => {
+  // store is in the user`s corresponding payment method
+  const updatedPaymentMethod = await addCredentialsToPaymentMethod(
+    req.user.id,
+    {
+      id: req.params.id,
+      stripePaymentMethod: req.body,
+    }
+  );
+  return res.status(statusCode.OK).json({
+    data: updatedPaymentMethod,
+    msg: `payment method ${updatedPaymentMethod.type} credentials has updated successfully!`,
+    status: statusCode.OK,
+  });
+});
 
 export let defaultPaymentMethod = async (req, res) => {
   try {
