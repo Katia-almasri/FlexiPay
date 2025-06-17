@@ -10,6 +10,7 @@ import { transactionStatus } from "../../../enums/TransactionStatus.enum.js";
 import { web3ChainTypes } from "../../../enums/Web3ChainType.enum.js";
 import { InternalServerError } from "../../../errors/InternalServerError.error.js";
 import { UnprocessableEntity } from "../../../errors/UnprocessableEntityError.error.js";
+import { decrypt } from "../../../utils/encryption/crypto.util.js";
 
 dotenv.config();
 
@@ -62,7 +63,7 @@ export class web3PaymentStrategy extends PaymentStrategy {
   async refund(transactionId, refundAmount) {
     try {
       const transaction = await Transaction.findById(transactionId);
-      const toAddress = transaction.userWallet;
+      const toAddress = decrypt(transaction.userWallet);
       console.log(`🔁 Refunding ${refundAmount} ETH to ${toAddress}`);
 
       // Create the transaction

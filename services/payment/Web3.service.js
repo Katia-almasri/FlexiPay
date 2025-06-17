@@ -2,6 +2,7 @@ import { statusCode } from "../../enums/common/StatusCode.enum.js";
 import { transactionStatus } from "../../enums/TransactionStatus.enum.js";
 import { Transaction } from "../../models/Transaction.model.js";
 import { providerTypes } from "../../enums/ProviderType.enum.js";
+import { encrypt, sha256 } from "../../utils/encryption/crypto.util.js";
 
 export let implementWebhook = async (data) => {
   try {
@@ -15,11 +16,14 @@ export let implementWebhook = async (data) => {
         code: statusCode.NOT_FOUND,
       };
     }
+
+    const fromWalletHash = sha256(fromAddress);
+    const paymentIntentHash = sha256("0");
     const transaction = await Transaction.findOneAndUpdate(
       {
-        userWallet: fromAddress,
+        userWalletHash: fromWalletHash,
         provider: providerTypes.WEB3,
-        paymentIntentId: "0",
+        paymentIntentHash: paymentIntentHash,
         status: transactionStatus.PENDING,
         amount: amount,
       },
@@ -30,8 +34,6 @@ export let implementWebhook = async (data) => {
       },
       { new: true }
     );
-
-    console.log(transaction);
 
     if (!transaction) {
       return {
