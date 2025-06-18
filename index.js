@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { authRoutes } from "./routes/api/auth.js";
 import { customerRoutes } from "./routes/api/customer.js";
+import { merchantRoutes } from "./routes/api/merchant.js";
 import { connectDB } from "./config/Database.config.js";
 import { paymentRoutes } from "./routes/api/payment.js";
 import { isAuthenticated } from "./middleware/auth.middleware.js";
@@ -38,6 +39,7 @@ let port = process.env.PORT;
  */
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", isAuthenticated, customerRoutes);
+app.use("/api/merchants", isAuthenticated, merchantRoutes);
 app.use("/api/payment-methods", isAuthenticated, paymentRoutes);
 app.use("/api/transactions", isAuthenticated, transactionRoutes);
 app.use("/api/payment-methods/paypal", isAuthenticated, paypalRoutes);
