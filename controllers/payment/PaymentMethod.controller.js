@@ -29,6 +29,20 @@ export let store = catchAsync(async (req, res) => {
   });
 });
 
+export let storeMerchantPaymentMethod = catchAsync(async (req, res) => {
+  const data = {
+    type: req.body.type,
+    credentials: req.body.credentials,
+    isPrimary: req.body.is_primary,
+  };
+  let paymentMethod = await addPaymentMethod(req.user.id, data);
+  return res.status(statusCode.OK).json({
+    data: paymentMethod,
+    status: statusCode.OK,
+    msg: "new payment method just added to you!",
+  });
+});
+
 export let indexByUser = async (req, res) => {
   try {
     const paymentMethods = await getPaymentMethodsByUser(
