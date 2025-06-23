@@ -1,9 +1,11 @@
-// src/models/merchant.js
-
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const merchantSchema = new mongoose.Schema({
-  name: String,
+  merchantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   accountHolderName: String,
   iban: String,
   swift: String,
@@ -13,4 +15,4 @@ const merchantSchema = new mongoose.Schema({
   lastPayoutDate: Date,
 });
 
-module.exports = mongoose.model("Merchant", merchantSchema);
+export const Merchant = mongoose.model("Merchant", merchantSchema);

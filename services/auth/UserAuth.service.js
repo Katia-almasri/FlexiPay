@@ -1,10 +1,25 @@
 import { User } from "../../models/user.model.js";
 import { generateToken } from "../../utils/auth/GenerateToken.util.js";
 import { UserResource } from "../../resources/User.resource.js";
+import { roles } from "../../enums/userRole.enum.js";
+import { Merchant } from "../../models/Merchant.model.js";
+import { currencyTypes } from "../../enums/CurrencyType.enum.js";
 
 export let create = async (data) => {
   const { username, email, password, role } = data;
   const user = await User.create({ username, email, password, role });
+  // if the user role is merchant then create the merchant instance
+  if (role == roles.MERCHANT) {
+    const merchant = await Merchant.create({
+      merchantId: user._id,
+      accountHolderName: data.credentials.account_holder_name,
+      iban: data.credentials.iban,
+      swift: data.credentials.swift,
+      accountNumber: data.credentials.accountNumber,
+      currency: currencyTypes.USD,
+      balance: 0,
+    });
+  }
   const token = generateToken(user);
   return { token: token, user: UserResource(user) };
 };

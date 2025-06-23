@@ -2,8 +2,8 @@
 import axios from "axios";
 import crypto from "crypto";
 import dotenv from "dotenv";
-import { bankTokens } from "../../enums/bank/BankToken.enum";
-import { legalTypes } from "../../enums/bank/LegalType.enum";
+import { bankTokens } from "../../enums/bank/BankToken.enum.js";
+import { legalTypes } from "../../enums/bank/LegalType.enum.js";
 
 dotenv.config();
 
