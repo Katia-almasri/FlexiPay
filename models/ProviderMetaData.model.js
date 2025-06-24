@@ -23,6 +23,17 @@ export const providerMetadataSchema = new mongoose.Schema({
     chain: String,
     paymentReference: String,
   },
+
+  bank: {
+    payoutId: String, // ID returned by Wise or other bank
+    recipientId: String, // Wise recipient or account ID
+    recipientName: String,
+    iban: String,
+    swift: String,
+    referenceNote: String, // the memo sent to the bank
+    createdAt: Date, // when the payout was initiated
+    estimatedDeliveryDate: Date, // optional if provided by provider
+  },
 });
 
 export const ProviderMetaData = mongoose.model(

@@ -4,6 +4,9 @@ import crypto from "crypto";
 import dotenv from "dotenv";
 import { bankTokens } from "../../enums/bank/BankToken.enum.js";
 import { legalTypes } from "../../enums/bank/LegalType.enum.js";
+import { Transaction } from "../../models/Transaction.model.js";
+import { paymentMethod } from "../../enums/PaymentMethod.enum.js";
+import { transactionStatus } from "../../enums/TransactionStatus.enum.js";
 
 dotenv.config();
 
@@ -71,6 +74,16 @@ export class WisePayoutService {
           headers: { Authorization: `Bearer ${this.apiKey}` },
         }
       );
+      const data = {
+        provider: paymentMethod.BANK,
+        status: transactionStatus.SUCCEED,
+        amount: details.amount,
+        currency: details.currency,
+        customerId: process.env.PLATFORM_SENDER_PROFIT_ACCOUNT, // admin id who specifies for distributing the profit to merchants
+        merchantId: details.merchantId,
+        paymentIntentId: transferRes.data.id,
+      };
+      const transaction = await Transaction.create(data);
 
       return {
         success: true,
