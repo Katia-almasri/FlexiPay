@@ -7,6 +7,7 @@ import { legalTypes } from "../../enums/bank/LegalType.enum.js";
 import { Transaction } from "../../models/Transaction.model.js";
 import { paymentMethod } from "../../enums/PaymentMethod.enum.js";
 import { transactionStatus } from "../../enums/TransactionStatus.enum.js";
+import { transactionTypes } from "../../enums/TransactionType.enum.js";
 
 dotenv.config();
 
@@ -77,11 +78,25 @@ export class WisePayoutService {
       const data = {
         provider: paymentMethod.BANK,
         status: transactionStatus.SUCCEED,
+        type: transactionTypes.PAYOUT,
         amount: details.amount,
         currency: details.currency,
-        customerId: process.env.PLATFORM_SENDER_PROFIT_ACCOUNT, // admin id who specifies for distributing the profit to merchants
+        customerId: new mongoose.Types.ObjectId(
+          process.env.PLATFORM_SENDER_PROFIT_ACCOUNT
+        ), // admin id who specifies for distrib
         merchantId: details.merchantId,
+        userWallet: null,
         paymentIntentId: transferRes.data.id,
+        providerMetaData: {
+          bank: {
+            payoutId: transferRes.data.id, // ID returned by Wise or other bank
+            recipientId: details.merchantId.toString(), // Wise recipient or account ID
+            recipientName: details.recipientName,
+            iban: details.iban,
+            swift: details.swift,
+            referenceNote: transferRes.memo,
+          },
+        },
       };
       const transaction = await Transaction.create(data);
 

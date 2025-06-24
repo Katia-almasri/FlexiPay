@@ -4,6 +4,7 @@ import { transactionStatus } from "../enums/TransactionStatus.enum.js";
 import { paymentMethod } from "../enums/PaymentMethod.enum.js";
 import { providerMetadataSchema } from "./ProviderMetaData.model.js";
 import { encrypt, decrypt, sha256 } from "../utils/encryption/crypto.util.js";
+import { transactionTypes } from "../enums/TransactionType.enum.js";
 
 const transactionSchema = new mongoose.Schema(
   {
@@ -12,6 +13,12 @@ const transactionSchema = new mongoose.Schema(
       enum: Object.values(paymentMethod),
       default: paymentMethod.STRIPE,
       required: true,
+    },
+    type: {
+      type: String,
+      enum: Object.values(transactionTypes),
+      default: transactionTypes.PAYMENT,
+      required: false,
     },
     status: {
       type: String,
