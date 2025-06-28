@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 /**
  * Constants
  */
-let port = process.env.PORT;
+let port = process.env.PORT || 5000;
 
 /**
  * Routes
