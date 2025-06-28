@@ -43,8 +43,22 @@ app.use("/api/merchants", isAuthenticated, merchantRoutes);
 app.use("/api/payment-methods", isAuthenticated, paymentRoutes);
 app.use("/api/transactions", isAuthenticated, transactionRoutes);
 app.use("/api/payment-methods/paypal", isAuthenticated, paypalRoutes);
-//
+
+// html webs
 app.use("/", htmlRoutes);
+
+// Test louts
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
+});
+
+app.get("/debug/env", (req, res) => {
+  res.send({
+    mongo: !!process.env.MONGO_URI,
+    stripe: !!process.env.STRIPE_SECRET,
+    jwt: !!process.env.JWT_SECRET,
+  });
+});
 
 app.use(errorHandler);
 app.use(mongoSanitize());
