@@ -61,7 +61,7 @@ app.get("/debug/env", (req, res) => {
 });
 
 app.use(errorHandler);
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 /**
  * Initiaing App & DB

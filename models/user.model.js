@@ -27,7 +27,7 @@ export const userSchema = new mongoose.Schema(
     paymentMethods: [paymentMethodSchema],
   },
   {
-    timestamp: true,
+    timestamps: true,
   }
 );
 

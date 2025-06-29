@@ -8,7 +8,6 @@ import { statusCode } from "../../enums/common/StatusCode.enum.js";
 export let registerUser = async (req, res) => {
   try {
     let data = await create(req.body);
-    console.log(data);
     res.status(statusCode.CREATED).json({
       data: data,
       msg: "user created successfully!",

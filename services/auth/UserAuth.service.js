@@ -8,6 +8,7 @@ import { currencyTypes } from "../../enums/CurrencyType.enum.js";
 export let create = async (data) => {
   const { username, email, password, role } = data;
   const user = await User.create({ username, email, password, role });
+  console.log(user);
   // if the user role is merchant then create the merchant instance
   if (role == roles.MERCHANT) {
     const merchant = await Merchant.create({

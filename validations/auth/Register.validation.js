@@ -47,11 +47,11 @@ export const RegisterUserSchema = Joi.object({
     "string.min": "Password must be at least 6 characters long.",
   }),
 
-  credentials: Joi.alternatives()
-    .conditional("role", {
-      switch: [{ is: "merchant", then: merchantBankCredentials }],
-      otherwise: Joi.forbidden(),
-    })
-    .required()
-    .messages({ "any.required": "merchant credentials are required." }),
+  credentials: Joi.alternatives().conditional("role", {
+    is: "merchant",
+    then: merchantBankCredentials.required().messages({
+      "any.required": "Merchant credentials are required.",
+    }),
+    otherwise: Joi.forbidden(),
+  }),
 });
