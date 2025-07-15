@@ -48,4 +48,39 @@ flexipay/
    ```bash
    npm install
    ```
+3. Configure environment variables
+   ```bash
+   PORT=5000
+   MONGODB_URI=your_mongodb_connection_string
+   STRIPE_SECRET=your_stripe_key
+   PAYPAL_CLIENT_ID=...
+   PAYPAL_SECRET=...
+   ```
+4. Run the server
+   ```bash
+   npm run start
+   npm run dev 
+   ```
+---
+
+## 🚀 Live Deployment
+This project is deployed on Microsoft Azure App Service.
+🔗 Live Demo (private) (optional link)
+
+---
+## 🔒 Security & Architecture Notes
+- Environment-based config for provider credentials
+- Modular service structure to allow plug-and-play gateway extensions
+- Scheduler job runs via Node-Cron or Azure Timer Trigger (future)
+- Compatible with CI/CD pipelines (GitHub Actions ready)
+
+---
+## 📫 Author
+Katia Almasri
+Backend Developer – FinTech | Cloud | APIs
+📧 katiaalmasri2@gmail.com
+🌐 GitHub | LinkedIn
+
+
+
 
