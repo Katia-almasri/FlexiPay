@@ -34,3 +34,18 @@ flexipay/
 ├── jobs/                 # Scheduled tasks (weekly payouts)
 ├── config/               # Stripe & PayPal credentials/config
 └── app.js                # Entry point
+```
+---
+
+## ⚙️ Setup & Installation
+1. Clone the repository
+   ```bash
+   git clone https://github.com/Katia-almasri/FlexiPay.git
+   cd flexipay
+   ```
+
+2. Install dependencies
+   ```bash
+   npm install
+   ```
+
