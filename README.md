@@ -27,13 +27,21 @@ This solution is ideal for **marketplaces, SaaS platforms**, or any product requ
 ```bash
 flexipay/
 │
+├── abstracts/            # The main interfaces
+├── config/               # The basic configuration (database, paypal..)
+├── controllers/          # The used controllers using the MVC pattern
+├── enums/                # Basic Enumerations in the system
+├── errors/               # Main Errors in that catched in the system using the entroalized error handling
+├── jobs/                 # The Scheduled jobs used in the system / mainly for the on-prem hosting
+├── middleware/           # The basic authentication and authorization rules
 ├── models/               # Mongoose models (User, Transaction, PaymentMethod)
+├── resources/            # To get a unified return types to the endpoint API
 ├── routes/               # API endpoints (payments, webhooks, merchants)
 ├── services/             # Logic for Stripe/PayPal integrations, payout job
 ├── utils/                # Utility functions (pagination, response formatter)
-├── jobs/                 # Scheduled tasks (weekly payouts)
+├── validations/          # The input validations throught the post/put requests
 ├── config/               # Stripe & PayPal credentials/config
-└── app.js                # Entry point
+└── index.js              # Entry point
 ```
 ---
 
@@ -80,6 +88,10 @@ Katia Almasri
 Backend Developer – FinTech | Cloud | APIs
 📧 katiaalmasri2@gmail.com
 🌐 GitHub | LinkedIn
+
+---
+## 📝 License
+MIT – Free to use and modify under terms of the license
 
 
 
